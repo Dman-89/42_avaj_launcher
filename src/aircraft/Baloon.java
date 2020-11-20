@@ -5,6 +5,8 @@ import tower.WeatherTower;
 
 public class Baloon extends Aircraft implements Flyable {
 
+    WeatherTower weatherTower;
+
     private Baloon(final String name, final Coordinates coordinates) {
         super(name, coordinates);
     }
@@ -16,6 +18,6 @@ public class Baloon extends Aircraft implements Flyable {
 
     @Override
     public void registerTower(final WeatherTower weatherTower) {
-
+        this.weatherTower = weatherTower;
     }
 }
