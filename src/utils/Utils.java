@@ -18,54 +18,56 @@ public final class Utils {
     private Utils() {
     }
 
-    public static long validateAndParseInput(InputStreamReader reader, WeatherTower weatherTower) throws IOException, ValidationException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
-        BufferedReader bufferedReader = new BufferedReader(reader);
+    public static long validateAndParseInput(final InputStreamReader reader, final WeatherTower weatherTower) throws IOException, ValidationException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
+        final BufferedReader bufferedReader = new BufferedReader(reader);
         String s = bufferedReader.readLine();
         if (s == null || !s.matches("\\d+") || s.startsWith("0"))
             throw new ValidationException("first line is null or contains invalid number: [" + s + "]");
-        long numIterations = Long.valueOf(s);
+        final long numIterations = Long.valueOf(s);
         Map<String, Long> counters = createCountersMap();
+        int longitude;
+        int latitude;
+        int height;
+        Flyable aircraft;
         while((s = bufferedReader.readLine()) != null) {
             String[] splitString = s.split(" ");
             validateFormat(splitString);
             String type = splitString[0];
             String name = splitString[1];
-            int longitude = Integer.valueOf(splitString[2]);
-            int latitude = Integer.valueOf(splitString[3]);
-            int height = Integer.valueOf(splitString[4]);
+            longitude = Integer.valueOf(splitString[2]);
+            latitude = Integer.valueOf(splitString[3]);
+            height = Integer.valueOf(splitString[4]);
             validateType(type);
             validateName(name, type, counters);
             validateCoordinates(longitude, latitude, height);
-            Flyable aircraft = AircraftFactory.newAircraft(type, name, longitude, latitude, height);
+            aircraft = AircraftFactory.newAircraft(type, name, longitude, latitude, height);
             aircraft.registerTower(weatherTower);
         }
         return numIterations;
     }
 
     private static Map<String, Long> createCountersMap() throws IllegalAccessException {
-        Map<String, Long> map = new HashMap<>(3);
-        Class<?> clazz = AircraftTypes.class;
-        Field[] aircraftTypes = clazz.getDeclaredFields();
-        for(Field aircraftType: aircraftTypes)
-            map.put((String)aircraftType.get(clazz), 1L);
+        final String[] aircraftTypes = AircraftFactory.getAircraftTypes();
+        final Map<String, Long> map = new HashMap<>(aircraftTypes.length);
+        for (String aircraftType: aircraftTypes)
+            map.put(aircraftType, 1L);
         return map;
     }
 
-    private static void validateFormat(String[] splitString) throws ValidationException {
+    private static void validateFormat(final String[] splitString) throws ValidationException {
         if (splitString.length != 5)
             throw new ValidationException("wrong aircraft data format: " + Arrays.toString(splitString));
     }
 
-    private static void validateType(String type) throws ValidationException, IllegalAccessException {
-        Class<?> clazz = AircraftTypes.class;
-        Field[] aircraftTypes = clazz.getDeclaredFields();
-        for(Field aircraftType: aircraftTypes)
-            if (type.equals(aircraftType.get(AircraftTypes.class)))
+    private static void validateType(final String type) throws ValidationException, IllegalAccessException {
+        final String[] aircraftTypes = AircraftFactory.getAircraftTypes();
+        for(String aircraftType: aircraftTypes)
+            if (type.equals(aircraftType))
                 return;
         throw new ValidationException("unknown aircraft type: " + type);
     }
 
-    private static void validateName(String name, String type, Map<String, Long> counters) throws ValidationException {
+    private static void validateName(final String name, final String type, final Map<String, Long> counters) throws ValidationException {
         if (!name.matches("[A-Z][1-9]\\d*"))
             throw new ValidationException("name doesn't match required format: [" + name + "]");
         else if (name.toUpperCase().charAt(0) != type.toUpperCase().charAt(0))
@@ -79,7 +81,7 @@ public final class Utils {
         }
     }
 
-    private static void validateCoordinates(int longitude, int latitude, int height) throws ValidationException {
+    private static void validateCoordinates(final int longitude, final int latitude, final int height) throws ValidationException {
         if (longitude <= 0 || latitude <= 0 || height < 0) {
             throw new ValidationException("wrong coordinate values: [longitude: " + longitude + ", latitude: " + latitude + ", height: " + height + "]");
         }

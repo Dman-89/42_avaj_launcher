@@ -4,9 +4,10 @@ import simulator.Simulator;
 import tower.WeatherTower;
 
 public class Helicopter extends Aircraft implements Flyable {
+
     private WeatherTower weatherTower;
 
-    Helicopter(String name, Coordinates coordinates) {
+    Helicopter(final String name, final Coordinates coordinates) {
         super(name, coordinates);
     }
 
@@ -46,7 +47,7 @@ public class Helicopter extends Aircraft implements Flyable {
 
     }
 
-    public void registerTower(WeatherTower weatherTower) {
+    public void registerTower(final WeatherTower weatherTower) {
         this.weatherTower = weatherTower;
         weatherTower.register(this);
         Simulator.getWriter().println("Tower says: " + this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + ") registered to weather tower.");

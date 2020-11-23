@@ -7,14 +7,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import simulator.Simulator;
 
 public class Tower {
-    private Queue<Flyable> observers = new ConcurrentLinkedQueue<>();
+    private final Queue<Flyable> observers = new ConcurrentLinkedQueue<>();
 
-    public void register(Flyable flyable) {
+    public void register(final Flyable flyable) {
         if (!this.observers.contains(flyable))
             this.observers.add(flyable);
     }
 
-    public void unregister(Flyable flyable) {
+    public void unregister(final Flyable flyable) {
         this.observers.remove(flyable);
     }
 

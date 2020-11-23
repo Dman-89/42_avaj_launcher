@@ -6,7 +6,7 @@ public class Aircraft {
     protected Coordinates coordinates;
     private static long idCounter = 0;
 
-    protected Aircraft(String name, Coordinates coordinates) {
+    protected Aircraft(final String name, final Coordinates coordinates) {
         this.name = name;
         this.coordinates = coordinates;
         this.id = this.nextId();

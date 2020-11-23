@@ -32,12 +32,12 @@ public final class Simulator {
         }
     }
 
-    public static void main(String[] args) throws IOException, ValidationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    public static void main(final String[] args) throws IOException, ValidationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
         if (args.length != 1) {
             throw new WrongNumberArgsException("Number of agruments in not 1");
         }
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(args[0]));
-        WeatherTower weatherTower = new WeatherTower();
+        final InputStreamReader reader = new InputStreamReader(new FileInputStream(args[0]));
+        final WeatherTower weatherTower = new WeatherTower();
         long numIterations = Utils.validateAndParseInput(reader, weatherTower);
         while(numIterations-- > 0L) {
             weatherTower.conditionsChanged();
