@@ -1,28 +1,24 @@
 package weatherprovider;
 
-import coordinates.Coordinates;
+import aircraft.Coordinates;
 
 public class WeatherProvider {
-
-    WeatherProvider instance;
-    String[] weather;
+    private static WeatherProvider instance;
+    private final String[] weather = new String[]{"RAIN", "FOG", "SUN", "SNOW"};
 
     private WeatherProvider() {
     }
 
-    public WeatherProvider getProvider() {
+    public static WeatherProvider getProvider() {
         if (instance == null) {
             instance = new WeatherProvider();
         }
+
         return instance;
     }
 
-    public String getCurrentWeather(Coordinates coordinates) {
-        byte index = (byte) (
-                coordinates.getHeight() % 4 +
-                coordinates.getLatitude() % 4 +
-                coordinates.getLongitude() % 4
-        );
-        return weather[index];
+    public String getCurrentWeather(Coordinates var1) {
+        byte var2 = (byte)((int)(((double)(var1.getHeight() % 4 + var1.getLatitude() % 4) + (double)(var1.getLongitude() % 4) * Math.random()) % 4.0D));
+        return this.weather[var2];
     }
 }
