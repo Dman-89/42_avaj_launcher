@@ -18,87 +18,70 @@ public final class Utils {
     private Utils() {
     }
 
-    public static long validateAndParseInput(InputStreamReader var0, WeatherTower var1) throws IOException, ValidationException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
-        BufferedReader var2 = new BufferedReader(var0);
-        String var3 = var2.readLine();
-        if (var3 != null && var3.matches("\\d+") && !var3.startsWith("0")) {
-            long var4 = Long.valueOf(var3);
-            Map var6 = createCountersMap();
-
-            while((var3 = var2.readLine()) != null) {
-                String[] var7 = var3.split(" ");
-                validateFormat(var7);
-                String var8 = var7[0];
-                String var9 = var7[1];
-                int var10 = Integer.valueOf(var7[2]);
-                int var11 = Integer.valueOf(var7[3]);
-                int var12 = Integer.valueOf(var7[4]);
-                validateType(var8);
-                validateName(var9, var8, var6);
-                validateCoordinates(var10, var11, var12);
-                Flyable var13 = AircraftFactory.newAircraft(var8, var9, var10, var11, var12);
-                var13.registerTower(var1);
-            }
-
-            return var4;
-        } else {
-            throw new ValidationException("first line is null or contains invalid number: [" + var3 + "]");
+    public static long validateAndParseInput(InputStreamReader reader, WeatherTower weatherTower) throws IOException, ValidationException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String s = bufferedReader.readLine();
+        if (s == null || !s.matches("\\d+") || s.startsWith("0"))
+            throw new ValidationException("first line is null or contains invalid number: [" + s + "]");
+        long numIterations = Long.valueOf(s);
+        Map<String, Long> counters = createCountersMap();
+        while((s = bufferedReader.readLine()) != null) {
+            String[] splitString = s.split(" ");
+            validateFormat(splitString);
+            String type = splitString[0];
+            String name = splitString[1];
+            int longitude = Integer.valueOf(splitString[2]);
+            int latitude = Integer.valueOf(splitString[3]);
+            int height = Integer.valueOf(splitString[4]);
+            validateType(type);
+            validateName(name, type, counters);
+            validateCoordinates(longitude, latitude, height);
+            Flyable aircraft = AircraftFactory.newAircraft(type, name, longitude, latitude, height);
+            aircraft.registerTower(weatherTower);
         }
+        return numIterations;
     }
 
     private static Map<String, Long> createCountersMap() throws IllegalAccessException {
-        HashMap var0 = new HashMap(3);
-        Class var1 = AircraftTypes.class;
-        Field[] var2 = var1.getDeclaredFields();
-        int var3 = var2.length;
-
-        for(int var4 = 0; var4 < var3; ++var4) {
-            Field var5 = var2[var4];
-            var0.put((String)var5.get(AircraftTypes.class), 1L);
-        }
-
-        return var0;
+        Map<String, Long> map = new HashMap<>(3);
+        Class<?> clazz = AircraftTypes.class;
+        Field[] aircraftTypes = clazz.getDeclaredFields();
+        for(Field aircraftType: aircraftTypes)
+            map.put((String)aircraftType.get(clazz), 1L);
+        return map;
     }
 
-    private static void validateFormat(String[] var0) throws ValidationException {
-        if (var0.length != 5) {
-            throw new ValidationException("wrong aircraft data format: " + Arrays.toString(var0));
-        }
+    private static void validateFormat(String[] splitString) throws ValidationException {
+        if (splitString.length != 5)
+            throw new ValidationException("wrong aircraft data format: " + Arrays.toString(splitString));
     }
 
-    private static void validateType(String var0) throws ValidationException, IllegalAccessException {
-        Class var1 = AircraftTypes.class;
-        Field[] var2 = var1.getDeclaredFields();
-        int var3 = var2.length;
-
-        for(int var4 = 0; var4 < var3; ++var4) {
-            Field var5 = var2[var4];
-            if (var0.equals(var5.get(AircraftTypes.class))) {
+    private static void validateType(String type) throws ValidationException, IllegalAccessException {
+        Class<?> clazz = AircraftTypes.class;
+        Field[] aircraftTypes = clazz.getDeclaredFields();
+        for(Field aircraftType: aircraftTypes)
+            if (type.equals(aircraftType.get(AircraftTypes.class)))
                 return;
-            }
-        }
-
-        throw new ValidationException("unknown aircraft type: " + var0);
+        throw new ValidationException("unknown aircraft type: " + type);
     }
 
-    private static void validateName(String var0, String var1, Map<String, Long> var2) throws ValidationException {
-        if (!var0.matches("[A-Z][1-9]\\d*")) {
-            throw new ValidationException("name doesn't match required format: [" + var0 + "]");
-        } else if (var0.toUpperCase().charAt(0) != var1.toUpperCase().charAt(0)) {
-            throw new ValidationException("name doesn't match aircraft type: [name=" + var0 + ", type=" + var1 + "]");
-        } else {
-            long var3 = (Long)var2.get(var1);
-            if (var3 == Long.valueOf(var0.substring(1))) {
-                var2.put(var1, ++var3);
-            } else {
-                throw new ValidationException("aircraft number is not chronologically ordered: expected " + var3 + ", found " + var0.substring(1) + "for aircraft " + var1 + " " + var0);
-            }
+    private static void validateName(String name, String type, Map<String, Long> counters) throws ValidationException {
+        if (!name.matches("[A-Z][1-9]\\d*"))
+            throw new ValidationException("name doesn't match required format: [" + name + "]");
+        else if (name.toUpperCase().charAt(0) != type.toUpperCase().charAt(0))
+            throw new ValidationException("name doesn't match aircraft type: [name=" + name + ", type=" + type + "]");
+        else {
+            long expectedNumber = counters.get(type);
+            if (expectedNumber == Long.valueOf(name.substring(1)))
+                counters.put(type, ++expectedNumber);
+            else
+                throw new ValidationException("aircraft number is not chronologically ordered: expected " + expectedNumber + ", found " + name.substring(1) + "for aircraft " + type + " " + name);
         }
     }
 
-    private static void validateCoordinates(int var0, int var1, int var2) throws ValidationException {
-        if (var0 <= 0 || var1 <= 0 || var2 < 0) {
-            throw new ValidationException("wrong coordinate values: [longitude: " + var0 + ", latitude: " + var1 + ", height: " + var2 + "]");
+    private static void validateCoordinates(int longitude, int latitude, int height) throws ValidationException {
+        if (longitude <= 0 || latitude <= 0 || height < 0) {
+            throw new ValidationException("wrong coordinate values: [longitude: " + longitude + ", latitude: " + latitude + ", height: " + height + "]");
         }
     }
 }

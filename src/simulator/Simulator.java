@@ -19,29 +19,30 @@ import tower.WeatherTower;
 import utils.Utils;
 
 public final class Simulator {
-    private static Queue<Flyable> unregisteredObservers = new ConcurrentLinkedQueue();
-    private static List<Flyable> registerObserversWaitList = new LinkedList();
+    private static Queue<Flyable> unregisteredObservers = new ConcurrentLinkedQueue<>();
+    private static List<Flyable> registerObserversWaitList = new LinkedList<>();
     private static PrintWriter writer;
 
-    public Simulator() {
+    static {
+        try {
+            writer = new PrintWriter(new File("simulation.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
-    public static void main(String[] var0) throws IOException, ValidationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
-        if (var0.length != 1) {
+    public static void main(String[] args) throws IOException, ValidationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+        if (args.length != 1) {
             throw new WrongNumberArgsException("Number of agruments in not 1");
-        } else {
-            InputStreamReader var1 = new InputStreamReader(new FileInputStream(var0[0]) {
-            });
-            new BufferedReader(var1);
-            WeatherTower var3 = new WeatherTower();
-            long var4 = Utils.validateAndParseInput(var1, var3);
-
-            while(var4-- > 0L) {
-                var3.conditionsChanged();
-            }
-
-            writer.close();
         }
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(args[0]));
+        WeatherTower weatherTower = new WeatherTower();
+        long numIterations = Utils.validateAndParseInput(reader, weatherTower);
+        while(numIterations-- > 0L) {
+            weatherTower.conditionsChanged();
+        }
+        writer.close();
     }
 
     public static PrintWriter getWriter() {
@@ -54,15 +55,5 @@ public final class Simulator {
 
     public static List<Flyable> getRegisterObserversWaitList() {
         return registerObserversWaitList;
-    }
-
-    static {
-        try {
-            writer = new PrintWriter(new File("simulation.txt"));
-        } catch (FileNotFoundException var1) {
-            var1.printStackTrace();
-            System.exit(1);
-        }
-
     }
 }

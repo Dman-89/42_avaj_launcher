@@ -13,12 +13,14 @@ public class WeatherProvider {
         if (instance == null) {
             instance = new WeatherProvider();
         }
-
         return instance;
     }
 
-    public String getCurrentWeather(Coordinates var1) {
-        byte var2 = (byte)((int)(((double)(var1.getHeight() % 4 + var1.getLatitude() % 4) + (double)(var1.getLongitude() % 4) * Math.random()) % 4.0D));
-        return this.weather[var2];
+    public String getCurrentWeather(Coordinates coordinates) {
+        byte index = (byte) ((coordinates.getLatitude() % 4 +
+                             coordinates.getLongitude() % 4 +
+                             coordinates.getHeight() % 4 *
+                             Math.random()) % 4);
+        return this.weather[index];
     }
 }

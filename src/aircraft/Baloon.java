@@ -7,63 +7,40 @@ public class Baloon extends Aircraft implements Flyable {
 
     WeatherTower weatherTower;
 
-    private Baloon(final String name, final Coordinates coordinates) {
+    Baloon(final String name, final Coordinates coordinates) {
         super(name, coordinates);
     }
 
     public void updateConditions() {
-        String var1 = this.weatherTower.getWeather(this.coordinates);
-        int var2 = this.coordinates.getHeight();
-        byte var4 = -1;
-        switch(var1.hashCode()) {
-            case 69790:
-                if (var1.equals("FOG")) {
-                    var4 = 1;
-                }
-                break;
-            case 82476:
-                if (var1.equals("SUN")) {
-                    var4 = 2;
-                }
-                break;
-            case 2507668:
-                if (var1.equals("RAIN")) {
-                    var4 = 0;
-                }
-                break;
-            case 2550147:
-                if (var1.equals("SNOW")) {
-                    var4 = 3;
-                }
-        }
-
-        switch(var4) {
-            case 0:
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude() + 5, this.coordinates.getHeight());
+        String weather = this.weatherTower.getWeather(this.coordinates);
+        int prevHeight = this.coordinates.getHeight();
+        switch(weather) {
+            case "RAIN":
+                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude(), this.coordinates.getHeight() - 5);
                 Simulator.getWriter().println(this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + "): All my sorrow and pain, I'll do my crying in the rain");
                 break;
-            case 1:
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude() + 1, this.coordinates.getHeight());
+            case "FOG":
+                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude(), this.coordinates.getHeight() - 3);
                 Simulator.getWriter().println(this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + "): Friends become lovers, and lovers lose friends, That's when the fog rolls in!");
                 break;
-            case 2:
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude() + 10, this.coordinates.getHeight() + 2);
+            case "SUN":
+                this.coordinates = new Coordinates(this.coordinates.getLongitude() + 2, this.coordinates.getLatitude(), this.coordinates.getHeight() + 4);
                 Simulator.getWriter().println(this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + "): Lazy summer days... wash away, Under the spell of soft summer rain");
                 break;
-            case 3:
-                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude(), this.coordinates.getHeight() - 7);
+            case "SNOW":
+                this.coordinates = new Coordinates(this.coordinates.getLongitude(), this.coordinates.getLatitude(), this.coordinates.getHeight() - 15);
                 Simulator.getWriter().println(this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + "): This ain't nothing but a winter jam, We're gonna celebrate as much as we can");
                 break;
             default:
                 throw new IllegalStateException("unknown weather type");
         }
 
-        if (this.coordinates.getHeight() == 0 && var2 != 0) {
+        if (this.coordinates.getHeight() == 0 && prevHeight != 0) {
             this.weatherTower.unregister(this);
             Simulator.getUnregisteredObservers().add(this);
             Simulator.getWriter().println(this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + "): landing.");
             Simulator.getWriter().println("Tower says: " + this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + ") unregistered from weather tower.");
-        } else if (this.coordinates.getHeight() > 0 && var2 == 0) {
+        } else if (this.coordinates.getHeight() > 0 && prevHeight == 0) {
             Simulator.getRegisterObserversWaitList().add(this);
             Simulator.getWriter().println("Tower says: " + this.getClass().getSimpleName() + "#" + this.name + "(" + this.id + ") registered to weather tower.");
         }
