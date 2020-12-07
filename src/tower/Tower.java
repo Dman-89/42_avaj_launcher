@@ -1,7 +1,6 @@
 package tower;
 
 import aircraft.Flyable;
-import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import simulator.Simulator;

@@ -5,14 +5,12 @@ import aircraft.Flyable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.ValidationException;
 import tower.WeatherTower;
-import utils.Constants.AircraftTypes;
 
 public final class Utils {
     private Utils() {
