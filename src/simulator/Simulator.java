@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import javax.xml.bind.ValidationException;
 import tower.WeatherTower;
 import utils.Utils;
 
@@ -31,7 +30,7 @@ public final class Simulator {
         }
     }
 
-    public static void main(final String[] args) throws IOException, ValidationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+    public static void main(final String[] args) throws IOException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException {
         if (args.length != 1) {
             throw new WrongNumberArgsException("Number of agruments in not 1");
         }

@@ -5,7 +5,7 @@ import utils.Constants;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import javax.xml.bind.ValidationException;
+import exception.ValidationException;
 
 public final class AircraftFactory {
 
@@ -14,7 +14,7 @@ public final class AircraftFactory {
     private AircraftFactory() {
     }
 
-    public static Flyable newAircraft(String type, String name, int longitude, int latitude, int height) throws IllegalAccessException, ValidationException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
+    public static Flyable newAircraft(String type, String name, int longitude, int latitude, int height) throws IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
         final Coordinates coordinates = new Coordinates(longitude, latitude, height);
         String[] aircraftTypes = getAircraftTypes();
         Class<?> aircraftClass;

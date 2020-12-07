@@ -9,14 +9,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.ValidationException;
+import exception.ValidationException;
 import tower.WeatherTower;
 
 public final class Utils {
     private Utils() {
     }
 
-    public static long validateAndParseInput(final InputStreamReader reader, final WeatherTower weatherTower) throws IOException, ValidationException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
+    public static long validateAndParseInput(final InputStreamReader reader, final WeatherTower weatherTower) throws IOException, IllegalAccessException, NoSuchMethodException, ClassNotFoundException, InvocationTargetException, InstantiationException {
         final BufferedReader bufferedReader = new BufferedReader(reader);
         String s = bufferedReader.readLine();
         if (s == null || !s.matches("\\d+") || s.startsWith("0"))
